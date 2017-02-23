@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>基于jpoto的网络拓扑图</title>
+<script src="../lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="./js/topologyPanel.js"></script>
+<script src="../lib/jpoto/jpoto-0.4.8.min.js"></script>
+<link rel="stylesheet" href="./css/topologyPanel.css" type="text/css" />
+</head>
+<body>
+<script type="text/javascript">
+var contain = $('body');
+var jtopo = new TopologyPanel();
+contain.append(jtopo.getEl());
+/*传入的更新的数据 */
+var clusterNode = {
+		type:1,
+		ip:'192.168.0.0',
+		ram:'8G',
+		cpu:'4G',
+		storage:'10T',
+		hosts:null
+}
+
+var hostArray = [];
+for(var i=0;i<4;i++){
+	var hostNode = {
+			type:3,
+			ip:'192.168.'+i+'.0',
+			ram:'4G',
+			cpu:'2G',
+			storage:'500G',
+			desks:null
+	}
+	var deskArray = [];
+	for(var j=0;j<60;j++){
+		var deskNode = {
+				type:5,
+				ip:'192.168.'+i+'.'+j,
+				ram:'2G',
+				cpu:'1G',
+				storage:'50G'
+		}
+		deskArray.push(deskNode);
+	}
+	hostArray.push(hostNode);
+	hostNode.desks = deskArray;
+}
+clusterNode.hosts = hostArray;
+var clusterArray = [clusterNode];
+
+var Nodes = {
+	cluster:clusterArray,		
+}
+jtopo.updateValue(Nodes);
+var timer = setInterval(function(){
+	jtopo.updateValue(Nodes);
+},3600000);
+jtopo.getEl().bind('freshTopology',function(){
+	jtopo.updateValue(Nodes);
+})
+
+</script>
+</body>
+</html>
